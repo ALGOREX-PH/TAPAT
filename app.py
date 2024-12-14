@@ -79,24 +79,27 @@ elif options == "Model" :
 
 elif options == "OCR" :
      st.title("OCR")
-
      Years_of_Experience = None
      programming_languages = None
      job_titles = None
      projects = None
      current_role = None
-      
-     def extract_text_from_pdf(file_path):
-         text = ""
-         with open(file_path, 'rb') as pdf_file:
-              reader = PyPDF2.PdfReader(pdf_file)
-              for page in reader.pages:
-                  text += page.extract_text()
-         return text
-     
-     pdf_text = extract_text_from_pdf("Resume/Profile.pdf")
 
-     SYSTEM_PROMPT = """
+     Link = st.text_input("Enter your Luma Event Link :")
+     if st.button("Confirm"):
+         if Link :
+             st.success("Details confirmed successfully!")
+
+             def extract_text_from_pdf(file_path):
+                 text = ""
+                 with open(file_path, 'rb') as pdf_file:
+                      reader = PyPDF2.PdfReader(pdf_file)
+                      for page in reader.pages:
+                          text += page.extract_text()
+                 return text
+             
+             pdf_text = extract_text_from_pdf("Resume/Profile.pdf")
+             SYSTEM_PROMPT = """
 Role:
 You are a highly skilled text editor and linguist specializing in refining and reconstructing text extracted from Optical Character Recognition (OCR) processes. Your role is to transform fragmented, error-prone text into polished, coherent, and human-readable content while maintaining the original intent, meaning, and context of the source material.
 
@@ -172,16 +175,16 @@ Item 1: $10
 Item 2: $15"
 By following these guidelines, you will provide the user with refined and professional versions of their OCR-extracted text. If parts of the text are ambiguous, provide suggestions or request clarification.
 """
-     struct = [{'role' : 'system', 'content' : SYSTEM_PROMPT}]
-     struct.append({"role": "user", "content": pdf_text})
-     chat = openai.ChatCompletion.create(model="gpt-4o-mini", messages = struct)
-     response = chat.choices[0].message.content
-     struct.append({"role": "assistant", "content": response})
+         struct = [{'role' : 'system', 'content' : SYSTEM_PROMPT}]
+         struct.append({"role": "user", "content": pdf_text})
+         chat = openai.ChatCompletion.create(model="gpt-4o-mini", messages = struct)
+         response = chat.choices[0].message.content
+         struct.append({"role": "assistant", "content": response})
 
-     clean_pdf = response
+         clean_pdf = response
 
      # years_experience
-     SYSTEM_PROMPT = """
+         SYSTEM_PROMPT = """
 Role:
 You are an advanced data extraction assistant programmed to identify, interpret, and calculate professional experience details with precision. Your primary task is to determine the total years of professional experience from a provided text and output it as a floating-point number.
 
@@ -301,17 +304,17 @@ Output: 0.0
 By adhering to these instructions, ensure consistent, precise extraction of years_experience to support downstream applications or analytics. If the input data lacks sufficient information, default to 0.0.
 """
 
-     struct = [{'role' : 'system', 'content' : SYSTEM_PROMPT}]
-     struct.append({"role": "user", "content": clean_pdf})
-     chat = openai.ChatCompletion.create(model="gpt-4o-mini", messages = struct)
-     response = chat.choices[0].message.content
-     struct.append({"role": "assistant", "content": response})
-     Years_of_Experience = response
+         struct = [{'role' : 'system', 'content' : SYSTEM_PROMPT}]
+         struct.append({"role": "user", "content": clean_pdf})
+         chat = openai.ChatCompletion.create(model="gpt-4o-mini", messages = struct)
+         response = chat.choices[0].message.content
+         struct.append({"role": "assistant", "content": response})
+         Years_of_Experience = response
 
 
 
      # programming_languages
-     SYSTEM_PROMPT = """
+         SYSTEM_PROMPT = """
 Role
 You are a highly intelligent and meticulous data extractor designed to analyze textual data and identify programming languages mentioned within it. Your purpose is to extract a clean, accurate list of programming languages explicitly referenced in the text and return it as a structured Python list.
 
@@ -386,18 +389,18 @@ Input Text
 Output
 Respond only with the finalized Python list containing the programming languages extracted from the input text. Avoid including any additional explanation or commentary in your output.
 """
-     struct = [{'role' : 'system', 'content' : SYSTEM_PROMPT}]
-     struct.append({"role": "user", "content": clean_pdf})
-     chat = openai.ChatCompletion.create(model="gpt-4o-mini", messages = struct)
-     response = chat.choices[0].message.content
-     struct.append({"role": "assistant", "content": response})
-     programming_languages = response
+         struct = [{'role' : 'system', 'content' : SYSTEM_PROMPT}]
+         struct.append({"role": "user", "content": clean_pdf})
+         chat = openai.ChatCompletion.create(model="gpt-4o-mini", messages = struct)
+         response = chat.choices[0].message.content
+         struct.append({"role": "assistant", "content": response})
+         programming_languages = response
 
 
 
 
       # job_titles
-     SYSTEM_PROMPT = """
+         SYSTEM_PROMPT = """
 Role
 You are an advanced data extraction system, specializing in identifying and extracting relevant information from structured, semi-structured, and unstructured text. Your primary responsibility is to analyze the input text thoroughly and extract all current and past job titles in a clean and accurate format. These job titles provide a concise summary of an individual's professional roles, which is essential for building resumes, career profiles, or data repositories.
 
@@ -506,16 +509,16 @@ Goal: Provide a list that reflects the individual's career progression accuratel
 By following these instructions, ensure precise and professional extraction of job titles, supporting the use of this information in career development, reporting, and analytical purposes.
 
 """
-     struct = [{'role' : 'system', 'content' : SYSTEM_PROMPT}]
-     struct.append({"role": "user", "content": clean_pdf})
-     chat = openai.ChatCompletion.create(model="gpt-4o-mini", messages = struct)
-     response = chat.choices[0].message.content
-     struct.append({"role": "assistant", "content": response})
-     job_titles = response
+         struct = [{'role' : 'system', 'content' : SYSTEM_PROMPT}]
+         struct.append({"role": "user", "content": clean_pdf})
+         chat = openai.ChatCompletion.create(model="gpt-4o-mini", messages = struct)
+         response = chat.choices[0].message.content
+         struct.append({"role": "assistant", "content": response})
+         job_titles = response
 
 
       # projects
-     SYSTEM_PROMPT = """
+         SYSTEM_PROMPT = """
 Role: You are an expert data extraction assistant specialized in identifying, summarizing, and structuring project details from professional profiles. Your goal is to analyze detailed work experience and derive a comprehensive list of projects, highlighting key aspects such as the role, organization, technologies used, objectives, outcomes, and their overall impact.
 
 Instructions: Carefully read through the given professional profile and focus on the "Experience" section. For each project mentioned, follow these steps:
@@ -573,16 +576,16 @@ Execution: Use the above format to extract project details for all roles and org
 
 
 """
-     struct = [{'role' : 'system', 'content' : SYSTEM_PROMPT}]
-     struct.append({"role": "user", "content": clean_pdf})
-     chat = openai.ChatCompletion.create(model="gpt-4o-mini", messages = struct)
-     response = chat.choices[0].message.content
-     struct.append({"role": "assistant", "content": response})
-     projects = response
+         struct = [{'role' : 'system', 'content' : SYSTEM_PROMPT}]
+         struct.append({"role": "user", "content": clean_pdf})
+         chat = openai.ChatCompletion.create(model="gpt-4o-mini", messages = struct)
+         response = chat.choices[0].message.content
+         struct.append({"role": "assistant", "content": response})
+         projects = response
 
 
       # current_role
-     SYSTEM_PROMPT = """
+         SYSTEM_PROMPT = """
 Role: You are an expert data extraction assistant specialized in identifying, summarizing, and structuring project details from professional profiles. Your goal is to analyze detailed work experience and derive a comprehensive list of projects, highlighting key aspects such as the role, organization, technologies used, objectives, outcomes, and their overall impact.
 
 Instructions: Carefully read through the given professional profile and focus on the "Experience" section. For each project mentioned, follow these steps:
@@ -639,16 +642,18 @@ Impact/Outcome: Delivered improved software processes for external clients, enab
 Execution: Use the above format to extract project details for all roles and organizations mentioned in the profile. Ensure that each project is structured, elaborative, and provides an insightful view into the candidate’s accomplishments.
 
 """
-     struct = [{'role' : 'system', 'content' : SYSTEM_PROMPT}]
-     struct.append({"role": "user", "content": clean_pdf})
-     chat = openai.ChatCompletion.create(model="gpt-4o-mini", messages = struct)
-     response = chat.choices[0].message.content
-     struct.append({"role": "assistant", "content": response})
-     current_role = response
+         struct = [{'role' : 'system', 'content' : SYSTEM_PROMPT}]
+         struct.append({"role": "user", "content": clean_pdf})
+         chat = openai.ChatCompletion.create(model="gpt-4o-mini", messages = struct)
+         response = chat.choices[0].message.content
+         struct.append({"role": "assistant", "content": response})
+         current_role = response
 
 
-     st.text(Years_of_Experience)
-     st.text(programming_languages)
-     st.text(job_titles)
-     st.text(projects)
-     st.text(current_role)
+         st.text(Years_of_Experience)
+         st.text(programming_languages)
+         st.text(job_titles)
+         st.text(projects)
+         st.text(current_role)
+     
+     
