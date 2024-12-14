@@ -1,0 +1,6 @@
+profile_data (dict): Dictionary containing candidate profile information
+        - years_experience (float): Total years of professional experience
+        - programming_languages (list): List of programming languages used
+        - job_titles (list): List of current and previous job titles
+        - projects (list): List of GitHub projects
+        - current_role (str): Current job title
