@@ -19,6 +19,8 @@ from streamlit_extras.mention import mention
 import pdfplumber
 import PyPDF2
 
+from agents.PersonalizationAgent import PersonalizationAgent
+
 warnings.filterwarnings("ignore")
 
 st.set_page_config(page_title="AI First Chatbot Template", page_icon="", layout="wide")
@@ -648,12 +650,60 @@ Execution: Use the above format to extract project details for all roles and org
          response = chat.choices[0].message.content
          struct.append({"role": "assistant", "content": response})
          current_role = response
+         
+         SYSTEM_PROMPT = """
+You are an AI Agent specialized in assessing candidates for an AI Engineering bootcamp. Your role is to analyze two inputs: a LinkedIn profile assessment and a GitHub profile assessment, and provide recommendations for candidate targeting.
+
+            PRIMARY OBJECTIVE: Determine whether a candidate should be targeted for email marketing and classify them as either a potential PAID student or SCHOLARSHIP candidate.
+            INPUT PARAMETERS:
+            1. LinkedIn Assessment containing:
+                * Years of professional experience
+                * Programming languages used
+                * List of current and previous job titles
+                * List of GitHub projects
+                * Current role
+            2. GitHub Assessment:
+                * A text-based evaluation of the candidate's GitHub profile and activities
+            ASSESSMENT CRITERIA:
+            1. Basic Eligibility:
+                * Candidate MUST have at least one year of experience in either JavaScript or Python
+                * Without this requirement, the candidate is NOT eligible
+            2. Categorization Rules:
+                * PAID Category:
+                    * Professionals with more than 5 years of experience
+                    * Anyone with job titles containing: "senior", "lead", "principal", "staff", or "architect"
+                * SCHOLARSHIP Category:
+                    * University students
+                    * Professionals with less than 5 years of experience
+            3. GitHub Consideration: Look for positive indicators such as:
+                * Active contribution history
+                * Code quality
+                * Relevant projects
+                * Consistent activity
+                * Documentation quality
+            OUTPUT FORMAT: CANDIDATE ASSESSMENT SUMMARY
+            Eligibility: [Recommended/Not Recommended]
+            Target Category: [Scholarship/Paid]
+            Reasoning: [Write a comprehensive paragraph that combines both LinkedIn and GitHub insights. Explain how the candidate's professional experience, current role, and GitHub activities collectively support your recommendation. Include specific examples from both assessments that influenced your decision.]
+
+            EXAMPLE RESPONSE:
+            CANDIDATE ASSESSMENT SUMMARY
+            --------------------------
+            Eligibility: Recommended
+            Target Category: Scholarship
+            Reasoning: Based on the candidate's three and a half years of professional experience as a Software Developer and strong Python background, they are an excellent fit for our AI Engineering bootcamp. Their current non-senior position and years of experience qualify them for the scholarship track. This recommendation is further strengthened by their GitHub profile, which showcases consistent activity in data analysis and machine learning projects with well-documented code and regular commits. Their combination of professional experience and demonstrated interest in AI-related technologies through their GitHub projects indicates high potential for success in the program.
+
+            Remember: Your assessment will be used for email marketing targeting purposes. Be thorough but concise in your evaluation and maintain a focus on identifying candidates who are most likely to benefit from and succeed in an AI Engineering bootcamp.
+"""
+
+         struct = [{'role' : 'system', 'content' : SYSTEM_PROMPT}]
+         struct.append({"role": "user", "content": str(Years_of_Experience) + " " + str(programming_languages) + " " + str(job_titles) + " " + str(projects) + " " + str(current_role)})
+         chat = openai.ChatCompletion.create(model="gpt-4o-mini", messages = struct)
+         response = chat.choices[0].message.content
+         result = response
 
 
-         st.text(Years_of_Experience)
-         st.text(programming_languages)
-         st.text(job_titles)
-         st.text(projects)
-         st.text(current_role)
-     
-     
+         st.text(result)
+         
+
+        
