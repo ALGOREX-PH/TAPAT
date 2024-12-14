@@ -22,7 +22,7 @@ warnings.filterwarnings("ignore")
 st.set_page_config(page_title="AI First Chatbot Template", page_icon="", layout="wide")
 
 with st.sidebar :
-    st.image('images/White_AI Republic.png')
+    # st.image('images/White_AI Republic.png')
     openai.api_key = st.text_input('Enter OpenAI API token:', type='password')
     if not (openai.api_key.startswith('sk-') and len(openai.api_key)==164):
         st.warning('Please enter your OpenAI API token!', icon='⚠️')
@@ -86,7 +86,7 @@ elif options == "OCR" :
                   text += page.extract_text()
          return text
      
-     pdf_text = extract_text_from_pdf("/content/Profile.pdf")
+     pdf_text = extract_text_from_pdf("Resume/Profile.pdf")
 
      SYSTEM_PROMPT = """
 Role:
@@ -171,5 +171,5 @@ By following these guidelines, you will provide the user with refined and profes
      struct.append({"role": "assistant", "content": response})
 
      st.text(response)
-     
+
     
